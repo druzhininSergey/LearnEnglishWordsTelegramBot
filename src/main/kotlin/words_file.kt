@@ -29,9 +29,9 @@ fun main() {
         when (input) {
             1 -> println("Выбран пункт \"Учить слова\".")
             2 -> {
-                val learnedWordsCount = dictionary.count { it.correctAnswersCount >= 3 }
-                val learnedWordInPercent = ((learnedWordsCount.toDouble() / lines.size) * 100).toInt()
-                println("Выучено $learnedWordsCount из ${lines.size} слов | $learnedWordInPercent%")
+                val learnedWordsCount = dictionary.filter { it.correctAnswersCount >= 3 }
+                val learnedWordInPercent = ((learnedWordsCount.size.toDouble() / lines.size) * 100).toInt()
+                println("Выучено ${learnedWordsCount.size} из ${lines.size} слов | $learnedWordInPercent%")
             }
 
             0 -> {
