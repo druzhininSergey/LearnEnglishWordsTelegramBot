@@ -1,7 +1,7 @@
-hello|привет|3
-dog|собака|2
-cat|кошка|
-fly|муха|1
+hello|привет|2
+dog|собака|1
+cat|кошка|0
+fly|муха|2
 keyboard|клавиатура|1
-mouse|мышь|2
-monitor|монитор|0
+mouse|мышь|0
+monitor|монитор|2
