@@ -6,7 +6,7 @@ data class Word(
     var correctAnswersCount: Int = 0,
 )
 
-fun MutableList<Word>.saveDictionary() {
+fun List<Word>.saveDictionary() {
     val wordsFile: File = File("words.txt")
     wordsFile.writeText("")
     this.forEach {

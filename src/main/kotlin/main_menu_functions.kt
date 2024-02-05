@@ -11,8 +11,8 @@ fun learnWords(dictionary: MutableList<Word>, unlearnedWords: MutableList<Word>)
     }
     do {
         val correctWord: Word
-        val fourShuffledWords = if (unlearnedWords.size >= 4) {
-            unlearnedWords.shuffled().take(4).also { correctWord = it.random() }
+        val fourShuffledWords = if (unlearnedWords.size >= NUMBER_OF_ANSWER_OPTIONS) {
+            unlearnedWords.shuffled().take(NUMBER_OF_ANSWER_OPTIONS).also { correctWord = it.random() }
         } else {
             val learnedWords = dictionary - unlearnedWords.toSet()
             val missingWords = NUMBER_OF_ANSWER_OPTIONS - unlearnedWords.size
@@ -29,7 +29,7 @@ fun learnWords(dictionary: MutableList<Word>, unlearnedWords: MutableList<Word>)
         var inputAnswer: Int?
         do {
             inputAnswer = readln().toIntOrNull()
-            if (inputAnswer == null || inputAnswer > NUMBER_OF_ANSWER_OPTIONS){
+            if (inputAnswer == null || inputAnswer > NUMBER_OF_ANSWER_OPTIONS) {
                 println("Введите цифру (вариант ответа) либо 0 для выхода в меню.")
                 continue
             }
@@ -37,17 +37,14 @@ fun learnWords(dictionary: MutableList<Word>, unlearnedWords: MutableList<Word>)
 
         when (inputAnswer) {
             wordsInTest.indexOf(correctWord) + 1 -> {
-                val indexOfCorrectWord = dictionary.indexOf(correctWord)
-                dictionary[indexOfCorrectWord].correctAnswersCount++
+                correctWord.correctAnswersCount++
                 dictionary.saveDictionary()
                 if (correctWord.correctAnswersCount >= REQUIRED_CORRECT_ANSWERS) unlearnedWords.remove(correctWord)
                 println("Правильно!")
             }
 
             0 -> continue
-            else -> {
-                println("Неправильно: ${correctWord.original} - ${correctWord.translated}")
-            }
+            else -> println("Неправильно: ${correctWord.original} - ${correctWord.translated}")
         }
     } while (inputAnswer != 0 && unlearnedWords.isNotEmpty())
 
