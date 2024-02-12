@@ -1,10 +1,10 @@
-fun showStatistics(dictionary: MutableList<Word>, unlearnedWords: MutableList<Word>) {
+fun showStatistics(dictionary: List<Word>, unlearnedWords: List<Word>) {
     val learnedWordInPercent =
         (((dictionary.size - unlearnedWords.size).toDouble() / dictionary.size) * 100).toInt()
     println("Выучено ${dictionary.size - unlearnedWords.size} из ${dictionary.size} слов | $learnedWordInPercent%")
 }
 
-fun learnWords(dictionary: MutableList<Word>, unlearnedWords: MutableList<Word>) {
+fun learnWords(dictionary: List<Word>, unlearnedWords: MutableList<Word>) {
     if (unlearnedWords.isEmpty()) {
         println("Вы выучили все слова.")
         return
