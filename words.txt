@@ -4,4 +4,4 @@ cat|кошка|3
 fly|муха|3
 keyboard|клавиатура|3
 mouse|мышь|2
-monitor|монитор|1
+monitor|монитор|2

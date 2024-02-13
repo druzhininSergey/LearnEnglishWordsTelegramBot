@@ -11,21 +11,21 @@ data class Question(
     val correctWord: Word,
 )
 
-class LearnWordsTrainer {
+class LearnWordsTrainer(private val requiredCorrectAnswers: Int = 3, val numberOfQuestionWords: Int = 4) {
 
     private val dictionary = loadDictionary()
     private val unlearnedWords: MutableList<Word> =
-        dictionary.filter { it.correctAnswersCount < REQUIRED_CORRECT_ANSWERS }.toMutableList()
+        dictionary.filter { it.correctAnswersCount < requiredCorrectAnswers }.toMutableList()
     private var question: Question? = null
 
     fun getNextQuestion(): Question? {
         if (unlearnedWords.isEmpty()) return null
         val correctWord: Word
-        val fourShuffledWords = if (unlearnedWords.size >= NUMBER_OF_ANSWER_OPTIONS) {
-            unlearnedWords.shuffled().take(NUMBER_OF_ANSWER_OPTIONS).also { correctWord = it.random() }
+        val fourShuffledWords = if (unlearnedWords.size >= numberOfQuestionWords) {
+            unlearnedWords.shuffled().take(numberOfQuestionWords).also { correctWord = it.random() }
         } else {
             val learnedWords = dictionary - unlearnedWords.toSet()
-            val missingWords = NUMBER_OF_ANSWER_OPTIONS - unlearnedWords.size
+            val missingWords = numberOfQuestionWords - unlearnedWords.size
             unlearnedWords.also { correctWord = it.random() } + learnedWords.shuffled().take(missingWords)
         }
         question = Question(fourShuffledWords.shuffled(), correctWord)
@@ -38,7 +38,7 @@ class LearnWordsTrainer {
             if (userAnswerIndex == correctAnswerIndex) {
                 it.correctWord.correctAnswersCount++
                 saveDictionary(dictionary)
-                if (it.correctWord.correctAnswersCount >= 0) unlearnedWords.remove(it.correctWord)
+                if (it.correctWord.correctAnswersCount >= requiredCorrectAnswers) unlearnedWords.remove(it.correctWord)
                 true
             } else false
         } ?: false

@@ -1,6 +1,3 @@
-const val REQUIRED_CORRECT_ANSWERS = 3
-const val NUMBER_OF_ANSWER_OPTIONS = 4
-
 data class Word(
     val original: String,
     val translated: String,
@@ -11,7 +8,7 @@ fun Question.asConsoleString(): String {
     val variants = this.variants
         .mapIndexed { index: Int, word: Word -> "${index + 1}) ${word.translated}" }
         .joinToString("\n")
-    return this.correctWord.translated + "\n" + variants + "\n0) Выйти в меню"
+    return this.correctWord.original + "\n" + variants + "\n0) Выйти в меню"
 }
 
 fun main() {
@@ -40,11 +37,11 @@ fun main() {
                         var inputAnswer: Int?
                         do {
                             inputAnswer = readln().toIntOrNull()
-                            if (inputAnswer == null || inputAnswer > NUMBER_OF_ANSWER_OPTIONS) {
+                            if (inputAnswer == null || inputAnswer > trainer.numberOfQuestionWords) {
                                 println("Введите цифру (вариант ответа) либо 0 для выхода в меню.")
                                 continue
                             }
-                        } while (inputAnswer !in 0..NUMBER_OF_ANSWER_OPTIONS)
+                        } while (inputAnswer !in 0..trainer.numberOfQuestionWords)
                         if (inputAnswer == 0) break
 
                         if (trainer.checkAnswer(inputAnswer?.minus(1))) {
