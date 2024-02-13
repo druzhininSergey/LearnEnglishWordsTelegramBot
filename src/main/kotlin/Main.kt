@@ -1,28 +1,65 @@
-import java.io.File
-
 const val REQUIRED_CORRECT_ANSWERS = 3
 const val NUMBER_OF_ANSWER_OPTIONS = 4
 
+data class Word(
+    val original: String,
+    val translated: String,
+    var correctAnswersCount: Int = 0,
+)
+
+fun Question.asConsoleString(): String {
+    val variants = this.variants
+        .mapIndexed { index: Int, word: Word -> "${index + 1}) ${word.translated}" }
+        .joinToString("\n")
+    return this.correctWord.translated + "\n" + variants + "\n0) Выйти в меню"
+}
+
 fun main() {
 
-    val wordsFile: File = File("words.txt")
-    val dictionary = mutableListOf<Word>()
-    val lines: List<String> = wordsFile.readLines()
-
-    for (line in lines) {
-        val line = line.split("|")
-        val word = Word(original = line[0], translated = line[1], correctAnswersCount = line[2].toIntOrNull() ?: 0)
-        dictionary.add(word)
+    val trainer = try {
+        LearnWordsTrainer()
+    } catch (e: Exception){
+        println("Невозможно запустить словарь")
+        return
     }
-    val unlearnedWords: MutableList<Word> =
-        dictionary.filter { it.correctAnswersCount < REQUIRED_CORRECT_ANSWERS }.toMutableList()
 
     while (true) {
-        println("Меню: 1- Учить слова, 2 - Статистика, 0 - Выход")
+        println("Меню: 1 - Учить слова, 2 - Статистика, 0 - Выход")
         val menuInput = readln().toIntOrNull()
         when (menuInput) {
-            1 -> learnWords(dictionary, unlearnedWords)
-            2 -> showStatistics(dictionary, unlearnedWords)
+            1 -> {
+                while (true) {
+                    val question = trainer.getNextQuestion()
+
+                    if (question == null) {
+                        println("Вы выучили все слова.")
+                        break
+                    } else {
+                        println(question.asConsoleString())
+
+                        var inputAnswer: Int?
+                        do {
+                            inputAnswer = readln().toIntOrNull()
+                            if (inputAnswer == null || inputAnswer > NUMBER_OF_ANSWER_OPTIONS) {
+                                println("Введите цифру (вариант ответа) либо 0 для выхода в меню.")
+                                continue
+                            }
+                        } while (inputAnswer !in 0..NUMBER_OF_ANSWER_OPTIONS)
+                        if (inputAnswer == 0) break
+
+                        if (trainer.checkAnswer(inputAnswer?.minus(1))) {
+                            println("Правильно!")
+                        } else println("Неправильно: ${question.correctWord.original} - ${question.correctWord.translated}")
+
+                    }
+                }
+            }
+
+            2 -> {
+                val statistics = trainer.getStatistics()
+                println("Выучено ${statistics.learned} из ${statistics.total} слов | ${statistics.percent}%")
+            }
+
             0 -> {
                 println("Завершение программы.")
                 break
