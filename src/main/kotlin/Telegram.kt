@@ -2,11 +2,11 @@ fun main(args: Array<String>) {
 
     val botToken = args[0]
     var updateId: Int? = 0
-    val telegramBotService = TelegramBotService()
+    val telegramBotService = TelegramBotService(botToken)
 
     while (true) {
         Thread.sleep(2000)
-        val updates: String = telegramBotService.getUpdates(botToken, updateId)
+        val updates: String = telegramBotService.getUpdates(updateId)
         println(updates)
 
         updateId = getValueByRegex(findBy = "\"update_id\":(.+?),", updates = updates)?.toInt()
@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
         val chatId = getValueByRegex("\"chat\":.\"id\":(\\d+),", updates)?.toInt()
         val userText = getValueByRegex("\"text\":\"(.+?)\"", updates)
 
-        if (userText == "Hello") telegramBotService.sendMessage(botToken, chatId, "Hello")
+        if (userText == "Hello") telegramBotService.sendMessage(chatId, "Hello")
     }
 }
 
