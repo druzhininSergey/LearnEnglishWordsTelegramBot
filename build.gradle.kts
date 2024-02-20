@@ -19,3 +19,4 @@ tasks.test {
 kotlin {
     jvmToolchain(19)
 }
+

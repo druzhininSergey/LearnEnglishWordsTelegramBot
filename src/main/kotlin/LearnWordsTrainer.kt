@@ -49,7 +49,7 @@ class LearnWordsTrainer(private val requiredCorrectAnswers: Int = 3, val numberO
         val total = dictionary.size
         val percent = try {
             learned * 100 / total
-        } catch (e: ArithmeticException){
+        } catch (e: ArithmeticException) {
             println("В словарь не добавлены слова")
             100
         }
@@ -57,14 +57,15 @@ class LearnWordsTrainer(private val requiredCorrectAnswers: Int = 3, val numberO
     }
 
     private fun loadDictionary(): List<Word> {
-        try {val dictionary = mutableListOf<Word>()
+        try {
+            val dictionary = mutableListOf<Word>()
             val wordsFile: File = File("words.txt")
             wordsFile.readLines().forEach {
                 val splitLine = it.split("|")
                 dictionary.add(Word(splitLine[0], splitLine[1], splitLine[2].toIntOrNull() ?: 0))
             }
             return dictionary
-        } catch (e: IndexOutOfBoundsException){
+        } catch (e: IndexOutOfBoundsException) {
             throw IllegalStateException("Некорректный файл")
         }
 
@@ -73,7 +74,7 @@ class LearnWordsTrainer(private val requiredCorrectAnswers: Int = 3, val numberO
     private fun saveDictionary(words: List<Word>) {
         val wordsFile: File = File("words.txt")
         wordsFile.writeText("")
-        for (word in words){
+        for (word in words) {
             wordsFile.appendText("${word.original}|${word.translated}|${word.correctAnswersCount}\n")
         }
     }
