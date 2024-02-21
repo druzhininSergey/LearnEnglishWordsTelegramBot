@@ -3,5 +3,5 @@ dog|собака|3
 cat|кошка|3
 fly|муха|3
 keyboard|клавиатура|3
-mouse|мышь|2
+mouse|мышь|1
 monitor|монитор|2
