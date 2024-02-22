@@ -1,5 +1,11 @@
 import java.io.File
 
+data class Word(
+    val original: String,
+    val translated: String,
+    var correctAnswersCount: Int = 0,
+)
+
 data class Statistics(
     val learned: Int,
     val total: Int,
@@ -16,7 +22,7 @@ class LearnWordsTrainer(private val requiredCorrectAnswers: Int = 3, val numberO
     private val dictionary = loadDictionary()
     private val unlearnedWords: MutableList<Word> =
         dictionary.filter { it.correctAnswersCount < requiredCorrectAnswers }.toMutableList()
-    private var question: Question? = null
+    var question: Question? = null
 
     fun getNextQuestion(): Question? {
         if (unlearnedWords.isEmpty()) return null
