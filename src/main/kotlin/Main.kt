@@ -41,7 +41,6 @@ fun main() {
                         if (trainer.checkAnswer(inputAnswer?.minus(1))) {
                             println("Правильно!")
                         } else println("Неправильно: ${question.correctWord.original} - ${question.correctWord.translated}")
-
                     }
                 }
             }
