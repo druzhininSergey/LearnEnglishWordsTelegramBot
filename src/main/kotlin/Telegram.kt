@@ -54,8 +54,9 @@ fun handleUpdate(update: Update, trainers: HashMap<Long, LearnWordsTrainer>, tel
     }
 
     if (data == RESET_CLICKED) {
-        trainer.resetProgress(trainers, chatId)
+        trainer.resetProgress()
         telegramBotService.sendMessage(chatId, "Прогресс сброшен")
+        trainers[chatId] = LearnWordsTrainer("$chatId.txt")
     }
 
     if (data == MENU_CLICKED) {

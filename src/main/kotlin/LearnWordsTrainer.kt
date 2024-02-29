@@ -93,10 +93,9 @@ class LearnWordsTrainer(
         }
     }
 
-    fun resetProgress(trainers: HashMap<Long, LearnWordsTrainer>, chatId: Long) {
+    fun resetProgress() {
         dictionary.forEach { it.correctAnswersCount = 0 }
         saveDictionary()
-        trainers[chatId] = LearnWordsTrainer("$chatId.txt")
     }
 
 }

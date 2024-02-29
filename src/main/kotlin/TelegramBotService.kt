@@ -35,8 +35,10 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-        return response.body()
+        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        println(result.getOrNull()?.body())
+        return result.getOrNull()?.body()
+            ?.let { responseString -> json.decodeFromString<Response>(responseString) }.toString()
     }
 
     fun sendMenu(chatId: Long): String {
@@ -62,8 +64,17 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-        return response.body()
+        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        return result.getOrNull()?.body()
+            ?.let { requestString -> json.decodeFromString<Response>(requestString)}.toString()
+    }
+
+    fun checkNextQuestionAndSend(trainer: LearnWordsTrainer, chatId: Long) {
+        val question = trainer.getNextQuestion()
+        if (question == null) {
+            sendMessage(chatId, "Вы выучили все слова в базе")
+            return
+        } else sendQuestion(chatId, question)
     }
 
     private fun sendQuestion(chatId: Long, question: Question?): String? {
@@ -101,15 +112,8 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-        return response.body()
-    }
-
-    fun checkNextQuestionAndSend(trainer: LearnWordsTrainer, chatId: Long) {
-        val question = trainer.getNextQuestion()
-        if (question == null) {
-            sendMessage(chatId, "Вы выучили все слова в базе")
-            return
-        } else sendQuestion(chatId, question)
+        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        return result.getOrNull()?.body()
+            ?.let { requestString -> json.decodeFromString<Response>(requestString)}.toString()
     }
 }
