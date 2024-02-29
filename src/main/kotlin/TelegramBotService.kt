@@ -1,3 +1,4 @@
+
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URI
@@ -70,19 +71,21 @@ class TelegramBotService(private val botToken: String) {
 
         val requestBody = SendMessageRequest(
             chatId = chatId,
-            text = question?.correctWord?.original.toString(),
+            text = question?.correctWord?.original.toString().replaceFirstChar { it.titlecase() },
             replyMarkup = ReplyMarkup(
                 if (question == null) return null
                 else {
                     listOf(
                         question.variants.take(2).mapIndexed { index, word ->
                             InlineKeyboard(
-                                text = word.translated, callbackData = "$CALLBACK_DATA_ANSWER_PREFIX$index"
+                                text = word.translated.replaceFirstChar { it.titlecase() },
+                                callbackData = "$CALLBACK_DATA_ANSWER_PREFIX$index"
                             )
                         },
                         question.variants.drop(2).mapIndexed { index, word ->
                             InlineKeyboard(
-                                text = word.translated, callbackData = "$CALLBACK_DATA_ANSWER_PREFIX${index + 2}"
+                                text = word.translated.replaceFirstChar { it.titlecase() },
+                                callbackData = "$CALLBACK_DATA_ANSWER_PREFIX${index + 2}"
                             )
                         },
                         listOf(
