@@ -1,4 +1,3 @@
-
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URI
@@ -16,14 +15,14 @@ class TelegramBotService(private val botToken: String) {
         val urlGetUpdates = "$TELEGRAM_BOT_API_BASE_URL/bot$botToken/getUpdates?offset=$updateId"
         val client: HttpClient = HttpClient.newBuilder().build()
         val request: HttpRequest = HttpRequest.newBuilder().uri(URI.create(urlGetUpdates)).build()
-        val result = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        val result: Result<HttpResponse<String>> =
+            runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
         println(result.getOrNull()?.body())
         return result.getOrNull()?.body()
             ?.let { responseString -> json.decodeFromString<Response>(responseString) }
     }
 
-
-    fun sendMessage(chatId: Long, text: String): String {
+    fun sendMessage(chatId: Long, text: String): String? {
         val urlSendMenu = "$TELEGRAM_BOT_API_BASE_URL/bot$botToken/sendMessage"
         val requestBody = SendMessageRequest(
             chatId = chatId,
@@ -35,13 +34,12 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
-        println(result.getOrNull()?.body())
+        val result: Result<HttpResponse<String>> =
+            runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
         return result.getOrNull()?.body()
-            ?.let { responseString -> json.decodeFromString<Response>(responseString) }.toString()
     }
 
-    fun sendMenu(chatId: Long): String {
+    fun sendMenu(chatId: Long): String? {
         val urlSendMenu = "$TELEGRAM_BOT_API_BASE_URL/bot$botToken/sendMessage"
         val requestBody = SendMessageRequest(
             chatId = chatId,
@@ -64,17 +62,9 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        val result: Result<HttpResponse<String>> =
+            runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
         return result.getOrNull()?.body()
-            ?.let { requestString -> json.decodeFromString<Response>(requestString)}.toString()
-    }
-
-    fun checkNextQuestionAndSend(trainer: LearnWordsTrainer, chatId: Long) {
-        val question = trainer.getNextQuestion()
-        if (question == null) {
-            sendMessage(chatId, "Вы выучили все слова в базе")
-            return
-        } else sendQuestion(chatId, question)
     }
 
     private fun sendQuestion(chatId: Long, question: Question?): String? {
@@ -112,8 +102,16 @@ class TelegramBotService(private val botToken: String) {
             .header("Content-type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
             .build()
-        val result: Result<HttpResponse<String>> = runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
+        val result: Result<HttpResponse<String>> =
+            runCatching { client.send(request, HttpResponse.BodyHandlers.ofString()) }
         return result.getOrNull()?.body()
-            ?.let { requestString -> json.decodeFromString<Response>(requestString)}.toString()
+    }
+
+    fun checkNextQuestionAndSend(trainer: LearnWordsTrainer, chatId: Long) {
+        val question = trainer.getNextQuestion()
+        if (question == null) {
+            sendMessage(chatId, "Вы выучили все слова в базе")
+            return
+        } else sendQuestion(chatId, question)
     }
 }

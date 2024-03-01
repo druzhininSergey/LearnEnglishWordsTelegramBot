@@ -14,7 +14,7 @@ data class Update(
 @Serializable
 data class Response(
     @SerialName("result")
-    val result: List<Update>
+    val result: List<Update>,
 )
 
 @Serializable
